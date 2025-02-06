@@ -5,8 +5,9 @@
   ansible.builtin.include_vars:
     file: "{{ item }}"
   with_first_found:
+    - "iap-release-{{ iap_release }}.yml"
     - "release-{{ iap_release }}.yml"
-    - "release-undefined.yml"
+    - "iap-release-undefined.yml"
 
 - name: Check for valid Redis release
   ansible.builtin.fail:
