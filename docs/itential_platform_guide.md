@@ -184,7 +184,7 @@ variables located in `roles/platform/defaults/main/redis.yml`.
 | platform_redis_sentinel_username | String | The username to use when connecting to Sentinel. | `sentineluser` |
 | platform_redis_sentinel_password | String | The password to use when connecting to Sentinel. | `sentineluser` |
 | platform_redis_name | String | The Redis primary name. This only has meaning when Redis is running with replication enabled. The sentinels will monitor this node and consider it down only when the sentinels agree. Note: The primary name should not include special characters other than: .-_ and no whitespaces. | `itentialmaster` |
-| platform_redis_tls_enabled | Object | Redis TLS configuration options for secure connections. Refer to NodeJS TLS library for all supported options. |  |
+| platform_redis_tls | Object | Redis TLS configuration options for secure connections. Refer to NodeJS TLS library for all supported options. |  |
 
 #### SNMP Variables
 
@@ -264,15 +264,6 @@ variables located in `roles/platform/defaults/main/mongodb.yml`.
 | platform_mongo_tls_allow_invalid_certificates | Boolean | If true, disables the validation checks for TLS certificates on other servers in the cluster and allows the use of invalid or self-signed certificates to connect. | `false` |
 | platform_mongo_tls_ca_file | String | The .pem file that contains the root certificate chain from the Certificate Authority. Specify the file name of the .pem file using absolute paths. |  |
 | platform_mongo_max_pool_size | Integer | The maximum number of connections in a connection pool. Each application/adapter has its own connection pool. |  |
-
-#### Offline Installation Variables
-
-These variables control offline installation behaviors. The following table lists the default
-variables located in `roles/platform/defaults/main/offline.yml`.
-
-| Variable | Type | Description | Default Value |
-| :------- | :--- | :---------- | :------------ |
-|  |  |  |  |
 
 #### Platform Variables
 
@@ -422,34 +413,23 @@ To execute all Platform roles, run the `platform` playbook:
 ansible-playbook itential.deployer.platform -i <inventory>
 ```
 
-You can also run select platform roles by using the following tags:
+The Platform playbook and role supports the following tags:
 
-* `platform_install`
-* `platform_adapters`
-* `platform_app_artifact`
+| Tag | Tasks |
+| :-- | :---- |
+| configure_os | Create required accounts and directories<br>Configure sudoers and firewalld |
+| install_dependencies | Install NodeJS and Python |
+| install_nodejs | Install NodeJS |
+| install_python | Install Python |
+| install_platform | Install Itential Platform |
+| install_adapters | Install Itential Platform adapters |
+| install_app_artifacts | Install Itential Platform App Artifacts |
+| configure_selinux | Configure SELinux |
+| configure_vault | Configure Hashicorp Vault |
+| configure_platform | Configure Itential Platform systemd service and properties file |
 
-To execute only the `platform` role, run the `itential.deployer.platform` playbook with the
-`platform_install` tag:
-
-```bash
-ansible-playbook itential.deployer.platform -i <inventory> --tags platform_install
-```
-
-To execute only the `platform_adapters` role, run the `itential.deployer.platform` playbook with
-the `platform_adapters` tag:
-
-```bash
-ansible-playbook itential.deployer.platform -i <inventory> --tags platform_adapters
-```
-
-To execute only the `platform_app_artifact` role, run the `itential.deployer.platform` playbook
-with the `platform_app_artifact` tag:
-
-```bash
-ansible-playbook itential.deployer.platform -i <inventory> --tags platform_app_artifact
-```
-
-To regenerate the platform.properties file run the platform role with the `configure_platform` tag:
+For example, to regenerate the systemd service script and platform.properties file run the platform 
+playbook with the `configure_platform` tag:
 
 ```bash
 ansible-playbook itential.deployer.platform -i <inventory> --tags configure_platform
