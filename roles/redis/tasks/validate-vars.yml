@@ -114,6 +114,41 @@
             msg: "Redis packages: {{ redis_packages }}"
           when: not redis_install_from_source | bool
 
+    - name: Validate offline install directory for the target OS
+      when: offline_install_enabled | bool
+      block:
+        - name: Extract OS directory name from redis_offline_packages_root
+          ansible.builtin.set_fact:
+            redis_offline_os_dir: "{{ redis_offline_packages_root.split('/')[1] }}"
+
+        - name: Assert offline packages directory matches target node OS
+          ansible.builtin.assert:
+            that: >-
+              redis_offline_os_dir ==
+              ansible_distribution | lower ~ '_' ~ ansible_distribution_major_version
+            fail_msg: >-
+              Offline packages directory '{{ redis_offline_os_dir }}' does not match
+              target node OS
+              '{{ ansible_distribution | lower }}_{{ ansible_distribution_major_version }}'.
+              Ensure offline packages were built for the correct OS and version.
+
+        - name: Stat offline packages directory on the control node
+          ansible.builtin.stat:
+            path: "{{ redis_offline_control_node_root }}"
+          register: redis_offline_dir_stat
+          delegate_to: localhost
+          become: false
+
+        - name: Assert offline packages directory exists on the control node
+          ansible.builtin.assert:
+            that:
+              - redis_offline_dir_stat.stat.exists
+              - redis_offline_dir_stat.stat.isdir
+            fail_msg: >-
+              Offline packages directory {{ redis_offline_control_node_root }} does not exist.
+              Ensure offline packages have been downloaded for
+              {{ ansible_distribution }} {{ ansible_distribution_major_version }}.
+
     - name: Print Redis installation details (offline)
       ansible.builtin.debug:
         msg: "Redis offline install using files from {{ redis_offline_control_node_root }}"
