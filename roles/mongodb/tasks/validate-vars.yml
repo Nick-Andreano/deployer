@@ -72,9 +72,9 @@
     - name: Validate offline install directory for the target OS
       when: offline_install_enabled | bool
       block:
-        - name: Extract OS directory name from mongodb_offline_packages_root
+        - name: Extract OS directory name from offline_itential_packages_path
           ansible.builtin.set_fact:
-            mongodb_offline_os_dir: "{{ mongodb_offline_packages_root.split('/')[1] }}"
+            mongodb_offline_os_dir: "{{ offline_itential_packages_path.split('/') | last }}"
 
         - name: Assert offline packages directory matches target node OS
           ansible.builtin.assert:
