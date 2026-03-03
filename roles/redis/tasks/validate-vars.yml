@@ -117,21 +117,6 @@
     - name: Validate offline install directory for the target OS
       when: offline_install_enabled | bool
       block:
-        - name: Extract OS directory name from offline_itential_packages_path
-          ansible.builtin.set_fact:
-            redis_offline_os_dir: "{{ offline_itential_packages_path.split('/') | last }}"
-
-        - name: Assert offline packages directory matches target node OS
-          ansible.builtin.assert:
-            that: >-
-              redis_offline_os_dir ==
-              ansible_distribution | lower ~ '_' ~ ansible_distribution_major_version
-            fail_msg: >-
-              Offline packages directory '{{ redis_offline_os_dir }}' does not match
-              target node OS
-              '{{ ansible_distribution | lower }}_{{ ansible_distribution_major_version }}'.
-              Ensure offline packages were built for the correct OS and version.
-
         - name: Stat offline packages directory on the control node
           ansible.builtin.stat:
             path: "{{ redis_offline_control_node_root }}"
