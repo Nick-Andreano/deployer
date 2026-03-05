@@ -1,0 +1,98 @@
+# Copyright (c) 2024, Itential, Inc
+# GNU General Public License v3.0+ (see LICENSE or https://www.gnu.org/licenses/gpl-3.0.txt)
+---
+# ============================================================================
+# Redis PKI Configuration - All components customizable
+# ============================================================================
+
+# Base PKI directory - override to use different root location
+redis_pki_base_dir: /etc/pki/redis
+
+# Subdirectory names - customize the layout
+redis_pki_private_subdir: private
+
+# Derived subdirectory paths - built from base + subdir name
+redis_pki_private_dir: "{{ redis_pki_base_dir }}/{{ redis_pki_private_subdir }}"
+
+# ============================================================================
+# Certificate and Key Filenames - Customize naming
+# ============================================================================
+
+# Redis server certificate filename
+redis_tls_cert_dest: "{{ inventory_hostname }}.crt"
+
+# Redis server private key filename
+redis_tls_key_dest: "{{ inventory_hostname }}.key"
+
+# Redis CA certificate filename
+redis_tls_ca_dest: ca-bundle.crt
+
+# Redis DH parameters filename
+redis_tls_dh_params_dest: dhparams.pem
+
+# Redis Sentinel certificate filename
+redis_sentinel_tls_cert_dest: sentinel.crt
+
+# Redis Sentinel private key filename
+redis_sentinel_tls_key_dest: sentinel.key
+
+# ============================================================================
+# Redis Server Full Certificate Paths - Built from components
+# ============================================================================
+
+# Redis server certificate path
+redis_tls_cert_dest: "{{ redis_pki_base_dir }}/{{ redis_tls_cert_dest }}"
+
+# Redis server private key path
+redis_tls_key_dest: "{{ redis_pki_private_dir }}/{{ redis_tls_key_dest }}"
+
+# Redis CA certificate path
+redis_tls_ca_dest: "{{ redis_pki_base_dir }}/{{ redis_tls_ca_dest }}"
+
+# Redis DH parameters path
+redis_tls_dh_params_dest: "{{ redis_pki_base_dir }}/{{ redis_tls_dh_params_dest }}"
+
+# ============================================================================
+# Redis Sentinel Full Certificate Paths - Built from components
+# ============================================================================
+
+# Sentinel certificate path
+redis_sentinel_tls_cert_dest: "{{ redis_pki_base_dir }}/{{ redis_sentinel_tls_cert_dest }}"
+
+# Sentinel private key path
+redis_sentinel_tls_key_dest: "{{ redis_pki_private_dir }}/{{ redis_sentinel_tls_key_dest }}"
+
+# ============================================================================
+# Source Directory - Define in inventory
+# ============================================================================
+
+# Source directory for certificate files (on Ansible controller)
+redis_pki_src_dir: ""
+
+# ============================================================================
+# Source File Paths - Built from source directory + filename
+# ============================================================================
+
+# Redis server source paths - auto-build from source dir + filename
+redis_tls_cert_src: "{{ redis_pki_src_dir }}/{{ redis_tls_cert_dest }}"
+redis_tls_key_src: "{{ redis_pki_src_dir }}/{{ redis_tls_key_dest }}"
+redis_tls_ca_src: "{{ redis_pki_src_dir }}/{{ redis_tls_ca_dest }}"
+redis_tls_dh_params_src: "{{ redis_pki_src_dir }}/{{ redis_tls_dh_params_dest }}"
+
+# Sentinel source paths - auto-build from source dir + filename
+redis_sentinel_tls_cert_src: "{{ redis_pki_src_dir }}/{{ redis_sentinel_tls_cert_dest }}"
+redis_sentinel_tls_key_src: "{{ redis_pki_src_dir }}/{{ redis_sentinel_tls_key_dest }}"
+
+# ============================================================================
+# File Ownership - Customize per environment
+# ============================================================================
+
+# Owner for PKI directories and files
+redis_pki_owner: redis
+
+# Group for PKI directories and files
+redis_pki_group: redis
+
+# ============================================================================
+# File Permissions - Customize per security requirements
+# ============================================================================
